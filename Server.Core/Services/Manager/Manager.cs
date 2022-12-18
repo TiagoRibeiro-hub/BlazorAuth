@@ -14,22 +14,13 @@ public sealed class Manager : IManager
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IUserStore<ApplicationUser> _userStore;
-    private readonly IUserEmailStore<ApplicationUser> _emailStore;
-    private readonly IEmailSender _emailSender;
 
     public Manager(
         SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager,
-        IUserStore<ApplicationUser> userStore,
-        IUserEmailStore<ApplicationUser> emailStore,
-        IEmailSender emailSender)
+        UserManager<ApplicationUser> userManager)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _userStore = userStore;
-        _emailSender = emailSender;
-        _emailStore = _emailSender.GetEmailStore(); ;
     }
 
     public async Task<Microsoft.AspNetCore.Identity.IdentityResult> AddLoginAsync(ApplicationUser user, UserLoginInfo info) => await _userManager.AddLoginAsync(user, info);
@@ -41,13 +32,6 @@ public sealed class Manager : IManager
     public async Task<Microsoft.AspNetCore.Identity.IdentityResult> ConfirmEmailAsync(ApplicationUser user, string code) => await _userManager.ConfirmEmailAsync(user, code);
 
     public async Task<Microsoft.AspNetCore.Identity.IdentityResult> CreateAsync(ApplicationUser user) => await _userManager.CreateAsync(user);
-
-    public ValueTask<ApplicationUser> CreateUser(UserDetailDto userDetailDto)
-    {
-        var user = ApplicationUserModel.CreateUser();
-        user.Detail = ApplicationUserModel.GetUserDetails(userDetailDto);
-        return ValueTask.FromResult(user);
-    }
 
     public async Task<Microsoft.AspNetCore.Identity.IdentityResult> CreateUser(ApplicationUser user, string password) => await _userManager.CreateAsync(user, password);
 
@@ -82,12 +66,6 @@ public sealed class Manager : IManager
 
     public async Task<Microsoft.AspNetCore.Identity.IdentityResult> SetUserNameAsync(ApplicationUser user, string email) => await _userManager.SetUserNameAsync(user, email);
 
-    public async Task SetUserStore(ApplicationUser user, string email, CancellationToken cancellationToken)
-    {
-        await _userStore.SetUserNameAsync(user, email, cancellationToken);
-        await _emailStore.SetEmailAsync(user, email, cancellationToken);
-    }
-
     public async Task SignInAsync(ApplicationUser user, bool isPersistent, string? authenticationMethod = null) => await _signInManager.SignInAsync(user, isPersistent: isPersistent, authenticationMethod: authenticationMethod);
 
     public async Task<bool> IsEmailConfirmedAsync(ApplicationUser user) => await _userManager.IsEmailConfirmedAsync(user);
@@ -108,5 +86,7 @@ public sealed class Manager : IManager
 
     public async Task SignOutAsync() => await _signInManager.SignOutAsync();
 
-    public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string code, string password) => await _userManager.ResetPasswordAsync(user, code, password);    
+    public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string code, string password) => await _userManager.ResetPasswordAsync(user, code, password);
+
+    public bool SupportsUserEmail() => _userManager.SupportsUserEmail;
 }

@@ -1,8 +1,9 @@
-﻿using Server.Entities.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Server.Entities.Entities;
 
 namespace Server.Core.Services.Email;
 public interface IEmailSender : Microsoft.AspNetCore.Identity.UI.Services.IEmailSender
 {
     Task<bool> SendEmailAsyncWithCheck(string to, string subject, string message);
-    Microsoft.AspNetCore.Identity.IUserEmailStore<ApplicationUser> GetEmailStore();
 }
+

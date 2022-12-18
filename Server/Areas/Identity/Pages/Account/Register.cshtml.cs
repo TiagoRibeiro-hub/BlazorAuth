@@ -10,25 +10,37 @@ using BlazorAuth.Shared.Dtos;
 using Server.Core.Services.Email;
 using Server.Core.Services.Manager;
 using Server.Core.Services;
+using Microsoft.AspNetCore.Identity;
+using Server.Entities.Entities;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using Server.Core.Model;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
+
+        private readonly IManager _manager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IAuthenticationManager _authenticationManager;
-        private readonly IManager _manager;
+
         public RegisterModel(
+            IManager manager,
+            IUserStore<ApplicationUser> userStore,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IAuthenticationManager authenticationManager,
-            IManager manager)
+            IAuthenticationManager authenticationManager)
         {
+            _manager = manager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
             _authenticationManager = authenticationManager;
-            _manager = manager;
         }
 
         [BindProperty]
@@ -51,10 +63,17 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _manager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var result = await _authenticationManager.CreateUser(Input, UserDetail); 
+                var user = ApplicationUserModel.CreateUser();
+
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                var result = await _authenticationManager.CreateUser(user, Input, UserDetail);
 
                 if (result.IdentityResult.Succeeded)
                 {
+                    _logger.LogInformation("User created a new account with password.");
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
@@ -70,7 +89,7 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _manager.SignInAsync(result.User, isPersistent: false);
+                        await _manager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
@@ -84,6 +103,15 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             return Page();
         }
 
+
+        private IUserEmailStore<ApplicationUser> GetEmailStore()
+        {
+            if (!_manager.SupportsUserEmail())
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
 
     }
 }

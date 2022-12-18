@@ -1,21 +1,16 @@
 ﻿using BlazorAuth.Shared.Dtos;
-using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Server.Core.Model;
-using Server.Core.PageModels.Account;
 using Server.Entities.Entities;
-using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace Server.Core.Services.Manager;
 
 public interface IManager
 {
     Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync();
-    ValueTask<ApplicationUser> CreateUser(UserDetailDto userDetailDto);
     Task<Microsoft.AspNetCore.Identity.IdentityResult> CreateUser(ApplicationUser user, string password);
     Task<EmailConfimationTokenModel> GenerateEmailConfirmationTokenAsync(ApplicationUser user);
-    Task SetUserStore(ApplicationUser user, string email, CancellationToken cancellationToken);
     bool RequireConfirmedAccount();
     Task SignInAsync(ApplicationUser user, bool isPersistent, string? authenticationMethod = null);
     Task<ApplicationUser> FindByEmailAsync(string email);
@@ -38,4 +33,6 @@ public interface IManager
     Task<SignInResult> TwoFactorRecoveryCodeSignInAsync(string recoveryCode);
     Task SignOutAsync();
     Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string code, string password);
+
+    bool SupportsUserEmail();
 }

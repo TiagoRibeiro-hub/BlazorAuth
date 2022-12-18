@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\UserDetail\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Server.Entities\Server.Entities.csproj" />
   </ItemGroup>
 

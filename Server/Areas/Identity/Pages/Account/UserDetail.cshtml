@@ -1,0 +1,48 @@
+﻿@page
+@using BlazorAuth.Shared.Enums;
+@model UserDetailModel
+@{
+    ViewData["Title"] = "Profile Details";
+}
+
+<div class="d-flex justify-content-center align-items-center">
+    <div class="row mt-5">
+        <div class="row d-flex justify-content-center">
+            <h1 class="d-flex justify-content-center mb-3">@ViewData["Title"]</h1>
+            <hr />
+            <div class="col-md-6 w-75 mt-4">
+                <form id="userDetailForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-floating mb-1">
+                        <input asp-for="UserDetail.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
+                        <label asp-for="UserDetail.FirstName"></label>
+                        <span asp-validation-for="UserDetail.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-1">
+                        <input asp-for="UserDetail.Surname" class="form-control" autocomplete="surname" aria-required="true" />
+                        <label asp-for="UserDetail.Surname"></label>
+                        <span asp-validation-for="UserDetail.Surname" class="text-danger"></span>
+                    </div>
+                    <div class="row form-floating mb-1">
+                        <div class="col-4 d-flex justify-content-center">
+                            <select class="form-control" asp-for="UserDetail.Gender" asp-items="Html.GetEnumSelectList<Gender>()">
+                                <option selected="selected" value="">Gender</option>
+                            </select>
+                            <span asp-validation-for="UserDetail.Gender" class="text-danger"></span>
+                        </div>                   
+                        <div class="col">
+                            <label asp-for="UserDetail.BirthDate" style="color: rgba(33,37,41, 0.65)"></label>
+                            <input class="form-control" asp-for="UserDetail.BirthDate" style="color: rgba(33,37,41, 0.65)" />
+                            <span asp-validation-for="UserDetail.BirthDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <button id="saveSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

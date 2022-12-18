@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAuth.Client", "Client
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAuth.Shared", "Shared\BlazorAuth.Shared.csproj", "{4C79F64C-96B7-456F-BA3F-E5098B1B23E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Core", "Server.Core\Server.Core.csproj", "{1BFE9B7C-67A2-40E0-904D-7C28E624393E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Core", "Server.Core\Server.Core.csproj", "{1BFE9B7C-67A2-40E0-904D-7C28E624393E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Data", "Server.Data\Server.Data.csproj", "{454FC356-A9FB-4A32-8AC2-129027107358}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Data", "Server.Data\Server.Data.csproj", "{454FC356-A9FB-4A32-8AC2-129027107358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Entities", "Server.Entities\Server.Entities.csproj", "{68AA9B08-C0C9-4991-B23E-C35FEF2DE5C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Entities", "Server.Entities\Server.Entities.csproj", "{68AA9B08-C0C9-4991-B23E-C35FEF2DE5C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

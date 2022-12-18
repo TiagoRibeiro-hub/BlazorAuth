@@ -10,16 +10,10 @@ namespace Server.Core.Services.Email;
 public sealed class EmailSender : IEmailSender
 {
     private readonly EmailOptions _emailOptions;
-    private readonly IUserStore<ApplicationUser> _userStore;
-    private readonly UserManager<ApplicationUser> _userManager;
-    public EmailSender(
-        IOptions<EmailOptions> emailOptions,
-        IUserStore<ApplicationUser> userStore,
-        UserManager<ApplicationUser> userManager)
+
+    public EmailSender(IOptions<EmailOptions> emailOptions)
     {
         _emailOptions = emailOptions.Value;
-        _userStore = userStore;
-        _userManager = userManager;
     }
 
     public async Task<bool> SendEmailAsyncWithCheck(string to, string subject, string message)
@@ -41,14 +35,7 @@ public sealed class EmailSender : IEmailSender
         _ = await SendAsync(email, subject, htmlMessage).ConfigureAwait(false);
     }
 
-    public IUserEmailStore<ApplicationUser> GetEmailStore()
-    {
-        if (!_userManager.SupportsUserEmail)
-        {
-            throw new NotSupportedException("The default UI requires a user store with email support.");
-        }
-        return (IUserEmailStore<ApplicationUser>)_userStore;
-    }
+
 
 
     #region PrivateMethods

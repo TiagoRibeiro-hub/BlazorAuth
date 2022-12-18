@@ -11,6 +11,11 @@ using Server.Core.PageModels.Account;
 using Server.Core.Services.Email;
 using Server.Core.Services.Manager;
 using Server.Core.Services;
+using Microsoft.AspNetCore.Identity;
+using Server.Entities.Entities;
+using Server.Core.Model;
+using static Duende.IdentityServer.Models.IdentityResources;
+using BlazorAuth.Server.Extensions;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
@@ -18,21 +23,28 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
     public class ExternalLoginModel : PageModel
     {
         private readonly IManager _manager;
-        private readonly IAuthenticationManager _authenticationManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<ExternalLoginModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IAuthenticationManager _authenticationManager;
 
         public ExternalLoginModel(
             IManager manager,
-            IAuthenticationManager authenticationManager,
+            IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IAuthenticationManager authenticationManager)
         {
             _manager = manager;
-            _authenticationManager = authenticationManager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            _authenticationManager = authenticationManager;
         }
+
+
 
         [BindProperty]
         public EmailInputModel Input { get; set; }
@@ -74,6 +86,15 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                var email = info.GetClaim(ClaimTypes.Email);
+                if (!string.IsNullOrEmpty(email))
+                {
+                    var hasDetails = await _authenticationManager.HasUserDetail(email);
+                    if (!hasDetails)
+                    {
+                        return RedirectToPage("/Account/UserDetail");
+                    }
+                }               
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -85,16 +106,18 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
                 ProviderDisplayName = info.ProviderDisplayName;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+                var email = info.GetClaim(ClaimTypes.Email);
+                if (!string.IsNullOrEmpty(email))
                 {
                     Input = new EmailInputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = email
                     };
                 }
                 return Page();
             }
         }
+
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
@@ -109,7 +132,12 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var result = await _authenticationManager.ExternalLogin(Input.Email, info);
+                var user = ApplicationUserModel.CreateUser();
+
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                var result = await _authenticationManager.ExternalLogin(user, info);
 
                 if (result.IdentityResult.Succeeded)
                 {
@@ -142,6 +170,15 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             ProviderDisplayName = info.ProviderDisplayName;
             ReturnUrl = returnUrl;
             return Page();
+        }
+
+        public IUserEmailStore<ApplicationUser> GetEmailStore()
+        {
+            if (!_manager.SupportsUserEmail())
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
 }

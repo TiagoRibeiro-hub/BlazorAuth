@@ -17,9 +17,11 @@ builder.Services.AddIdentityServer().AddApiAuthorization<ApplicationUser, Applic
 
 builder.Services.AddAuthentication(builder.Configuration);
 
+builder.Services.AddServices();
+builder.Services.AddRepositories();
+
 builder.Services.AddEmailService(builder.Configuration);
 
-builder.Services.AddServices();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

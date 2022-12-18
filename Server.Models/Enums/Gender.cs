@@ -1,6 +1,6 @@
 ﻿
 
-namespace BlazorAuth.Shared.Enums;
+namespace Server.Models.Enums;
 public enum Gender
 {
     Male,

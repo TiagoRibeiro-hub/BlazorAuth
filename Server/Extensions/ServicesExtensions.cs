@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Server.Core.Services;
 using Server.Core.Services.Email;
 using Server.Core.Services.Manager;
 using Server.Data;
+using Server.Data.Repositories;
 using Server.Entities.Entities;
 using Server.Entities.Options;
 
@@ -49,16 +51,21 @@ public static class ServicesExtensions
             .AddGoogleAuthentication(options.Google);
     }
 
-    public static void AddEmailService(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
-        services.AddTransient<IEmailSender, EmailSender>();
-    }
-
     public static void AddServices(this IServiceCollection services)
     {
         services.AddScoped<IManager, Manager>();
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
         services.AddScoped<IUserDetailService, UserDetailService>();
+    }    
+    
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IBaseRepository, BaseRepository>();
+    }
+
+    public static void AddEmailService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
+        services.AddTransient<IEmailSender, EmailSender>();
     }
 }

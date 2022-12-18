@@ -1,6 +1,7 @@
 ﻿using Duende.IdentityServer.EntityFramework.Entities;
 using Google.Apis.PeopleService.v1.Data;
 using IdentityModel;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace BlazorAuth.Server.Extensions;
@@ -61,5 +62,15 @@ public static class ClaimsIdentityEntensions
             claimsIdentity.AddClaim(index == 0 ? JwtClaimTypes.PhoneNumber : $"{JwtClaimTypes.PhoneNumber}{index}", phone.Value);
             index++;
         }
+    }
+
+    public static string GetClaim(this ExternalLoginInfo info, string type)
+    {
+        if (info.Principal.HasClaim(c => c.Type == type))
+        {
+            return info.Principal.FindFirstValue(type);
+
+        }
+        return string.Empty;
     }
 }
