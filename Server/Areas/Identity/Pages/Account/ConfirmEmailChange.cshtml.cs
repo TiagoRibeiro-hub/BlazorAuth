@@ -10,19 +10,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Server.Core.Services.Manager;
 using Server.Entities.Entities;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IManager _manager;
 
-        public ConfirmEmailChangeModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public ConfirmEmailChangeModel(IManager manager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _manager = manager;
         }
 
         [TempData]
@@ -35,14 +34,14 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 return RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _manager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ChangeEmailAsync(user, email, code);
+            var result = await _manager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
             {
                 StatusMessage = "Error changing email.";
@@ -51,14 +50,14 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 
             // In our UI email and user name are one and the same, so when we update the email
             // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
+            var setUserNameResult = await _manager.SetUserNameAsync(user, email);
             if (!setUserNameResult.Succeeded)
             {
                 StatusMessage = "Error changing user name.";
                 return Page();
             }
 
-            await _signInManager.RefreshSignInAsync(user);
+            await _manager.RefreshSignInAsync(user);
             StatusMessage = "Thank you for confirming your email change.";
             return Page();
         }

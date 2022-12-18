@@ -10,18 +10,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Server.Core.PageModels.Account;
 using Server.Core.Services.Email;
+using Server.Core.Services.Manager;
 using Server.Entities.Entities;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IManager _manager;
         private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(IManager manager, IEmailSender emailSender)
         {
-            _userManager = userManager;
+            _manager = manager;
             _emailSender = emailSender;
         }
 
@@ -33,8 +34,8 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                var user = await _manager.FindByEmailAsync(Input.Email);
+                if (user == null || !(await _manager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
@@ -42,8 +43,9 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 
                 // For more information on how to enable account confirmation and password reset please
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var code = await _manager.GeneratePasswordResetTokenAsync(user);
+                
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,

@@ -10,23 +10,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Server.Core.Services.Manager;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IManager _manager;
         private readonly ILogger<LogoutModel> _logger;
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(IManager manager, ILogger<LogoutModel> logger)
         {
-            _signInManager = signInManager;
+            _manager = manager;
             _logger = logger;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
+            await _manager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {

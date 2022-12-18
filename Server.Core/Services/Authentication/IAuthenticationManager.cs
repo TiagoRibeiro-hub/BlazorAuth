@@ -8,8 +8,8 @@ using Server.Entities.Entities;
 
 namespace Server.Core.Services;
 
-public interface IRegisterService
+public interface IAuthenticationManager
 {
     Task<ResponseModel> CreateUser(RegisterInputModel input, UserDetailDto userDetailDto);
-
+    Task<ResponseModel> ExternalLogin(string email, UserLoginInfo info);
 }

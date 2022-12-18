@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Server.Core.Services;
 using Server.Core.Services.Email;
+using Server.Core.Services.Manager;
 using Server.Data;
 using Server.Entities.Entities;
 using Server.Entities.Options;
@@ -56,7 +57,8 @@ public static class ServicesExtensions
 
     public static void AddServices(this IServiceCollection services)
     {
+        services.AddScoped<IManager, Manager>();
+        services.AddScoped<IAuthenticationManager, AuthenticationManager>();
         services.AddScoped<IUserDetailService, UserDetailService>();
-        services.AddScoped<IRegisterService, RegisterService>();
     }
 }

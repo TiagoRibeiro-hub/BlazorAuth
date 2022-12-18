@@ -4,7 +4,7 @@ namespace Server.Core.Model;
 
 public sealed class ResponseModel
 {
-    public UrlPageModel UrlPageModel { get; set; }
+    public EmailConfimationTokenModel EmailConfimationToken { get; set; }
     public Microsoft.AspNetCore.Identity.IdentityResult IdentityResult { get; set; }
     public ApplicationUser User { get; set; }    
 }
