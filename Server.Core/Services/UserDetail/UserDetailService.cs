@@ -1,6 +1,11 @@
-﻿namespace Server.Core.Services;
+﻿using BlazorAuth.Shared.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Server.Core.PageModels.Account;
+using Server.Entities.Entities;
 
-public sealed class UserDetailService : IUserDetailService 
+namespace Server.Core.Services;
+
+public sealed class UserDetailService : IUserDetailService
 {
 
 }

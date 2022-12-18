@@ -1,6 +1,6 @@
-﻿
-
-namespace Server.Core.Services;
+﻿namespace Server.Core.Services;
 public interface IUserDetailService
 {
+
 }
+

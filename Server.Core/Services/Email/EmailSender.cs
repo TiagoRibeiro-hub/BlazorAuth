@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Server.Entities.Entities;
 using Server.Entities.Options;
 using System.Net;
 using System.Net.Mail;
@@ -8,10 +10,16 @@ namespace Server.Core.Services.Email;
 public sealed class EmailSender : IEmailSender
 {
     private readonly EmailOptions _emailOptions;
-
-    public EmailSender(IOptions<EmailOptions> emailOptions)
+    private readonly IUserStore<ApplicationUser> _userStore;
+    private readonly UserManager<ApplicationUser> _userManager;
+    public EmailSender(
+        IOptions<EmailOptions> emailOptions,
+        IUserStore<ApplicationUser> userStore,
+        UserManager<ApplicationUser> userManager)
     {
         _emailOptions = emailOptions.Value;
+        _userStore = userStore;
+        _userManager = userManager;
     }
 
     public async Task<bool> SendEmailAsyncWithCheck(string to, string subject, string message)
@@ -29,30 +37,35 @@ public sealed class EmailSender : IEmailSender
 
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        try
-        {
-            CheckOptions();
-            _ = await SendAsync(email, subject, htmlMessage).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-        }
+        CheckOptions();
+        _ = await SendAsync(email, subject, htmlMessage).ConfigureAwait(false);
     }
 
+    public IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!_userManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<ApplicationUser>)_userStore;
+    }
+
+
+    #region PrivateMethods
     private void CheckOptions()
     {
         if (string.IsNullOrEmpty(_emailOptions.EmailFrom))
         {
             throw new ArgumentNullException("Email From is Null");
-        }        
+        }
         if (string.IsNullOrEmpty(_emailOptions.EmailFromName))
         {
             throw new ArgumentNullException("Email From Name is Null");
-        }        
+        }
         if (string.IsNullOrEmpty(_emailOptions.Port))
         {
             throw new ArgumentNullException("Email Port is Null");
-        }        
+        }
         if (string.IsNullOrEmpty(_emailOptions.Password))
         {
             throw new ArgumentNullException("Email Password is Null");
@@ -82,4 +95,6 @@ public sealed class EmailSender : IEmailSender
 
         return true;
     }
+    #endregion
+
 }

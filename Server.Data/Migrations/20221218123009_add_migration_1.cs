@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Server.Data.Migrations
 {
-    public partial class add_migration_init : Migration
+    public partial class add_migration_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,7 +46,7 @@ namespace Server.Data.Migrations
                 oldMaxLength: 128);
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "UserDetail",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "UniqueIdentifier", nullable: false),
@@ -54,35 +54,38 @@ namespace Server.Data.Migrations
                     Surname = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_UserDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_User_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_UserDetail_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_ApplicationUserId",
-                table: "User",
-                column: "ApplicationUserId");
+                name: "IX_UserDetail_FirstName_Surname",
+                table: "UserDetail",
+                columns: new[] { "FirstName", "Surname" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_FirstName_Surname",
-                table: "User",
-                columns: new[] { "FirstName", "Surname" });
+                name: "IX_UserDetail_UserId",
+                table: "UserDetail",
+                column: "UserId",
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "User");
+                name: "UserDetail");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",

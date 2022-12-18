@@ -1,4 +1,5 @@
 ﻿@page
+@using BlazorAuth.Shared.Enums;
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
@@ -17,6 +18,29 @@
                         <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
                         <label asp-for="Input.Email"></label>
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-1">
+                        <input asp-for="UserDetail.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
+                        <label asp-for="UserDetail.FirstName"></label>
+                        <span asp-validation-for="UserDetail.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-1">
+                        <input asp-for="UserDetail.Surname" class="form-control" autocomplete="surname" aria-required="true" />
+                        <label asp-for="UserDetail.Surname"></label>
+                        <span asp-validation-for="UserDetail.Surname" class="text-danger"></span>
+                    </div>
+                    <div class="row form-floating mb-1">
+                        <div class="col-4 d-flex justify-content-center">
+                            <select class="form-control" asp-for="UserDetail.Gender" asp-items="Html.GetEnumSelectList<Gender>()">
+                                <option selected="selected" value="">Gender</option>
+                            </select>
+                            <span asp-validation-for="UserDetail.Gender" class="text-danger"></span>
+                        </div>                   
+                        <div class="col">
+                            <label asp-for="UserDetail.BirthDate" style="color: rgba(33,37,41, 0.65)"></label>
+                            <input class="form-control" asp-for="UserDetail.BirthDate" style="color: rgba(33,37,41, 0.65)" />
+                            <span asp-validation-for="UserDetail.BirthDate" class="text-danger"></span>
+                        </div>
                     </div>
                     <div class="form-floating mb-1">
                         <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />

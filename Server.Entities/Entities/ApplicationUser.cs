@@ -4,5 +4,5 @@ using System.Collections.ObjectModel;
 namespace Server.Entities.Entities;
 public class ApplicationUser : IdentityUser
 {
-    public ICollection<UserDetail> UserDetails { get; set; } = new Collection<UserDetail>();
+    public UserDetail Detail { get; set; } 
 }

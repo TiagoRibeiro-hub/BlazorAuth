@@ -9,11 +9,11 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Server.Entities.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Server.Core.PageModels;
+using Server.Core.Services.Email;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account.Manage
 {

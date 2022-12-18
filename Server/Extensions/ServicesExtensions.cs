@@ -18,7 +18,7 @@ public static class ServicesExtensions
 
     public static IdentityBuilder AddIdentity(this IServiceCollection services)
     {
-        return services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        return services.AddDefaultIdentity<ApplicationUser>(options =>
         {
             options.Password.RequiredLength = 6;
             options.Password.RequireDigit = true;
@@ -54,8 +54,9 @@ public static class ServicesExtensions
         services.AddTransient<IEmailSender, EmailSender>();
     }
 
-    public static void AddServices(this IServiceCollection services, IConfiguration configuration)
+    public static void AddServices(this IServiceCollection services)
     {
         services.AddScoped<IUserDetailService, UserDetailService>();
+        services.AddScoped<IRegisterService, RegisterService>();
     }
 }

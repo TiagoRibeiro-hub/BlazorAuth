@@ -12,8 +12,8 @@ using Server.Data;
 namespace Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221217222338_add_migration_init")]
-    partial class add_migration_init
+    [Migration("20221218123009_add_migration_1")]
+    partial class add_migration_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -369,9 +369,6 @@ namespace Server.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("UniqueIdentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
@@ -392,13 +389,18 @@ namespace Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.HasIndex("FirstName", "Surname");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("UserDetail", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -454,14 +456,18 @@ namespace Server.Data.Migrations
 
             modelBuilder.Entity("Server.Entities.Entities.UserDetail", b =>
                 {
-                    b.HasOne("Server.Entities.Entities.ApplicationUser", null)
-                        .WithMany("UserDetails")
-                        .HasForeignKey("ApplicationUserId");
+                    b.HasOne("Server.Entities.Entities.ApplicationUser", "User")
+                        .WithOne("Detail")
+                        .HasForeignKey("Server.Entities.Entities.UserDetail", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Server.Entities.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("UserDetails");
+                    b.Navigation("Detail")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

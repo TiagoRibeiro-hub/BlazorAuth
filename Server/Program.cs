@@ -19,6 +19,8 @@ builder.Services.AddAuthentication(builder.Configuration);
 
 builder.Services.AddEmailService(builder.Configuration);
 
+builder.Services.AddServices();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
