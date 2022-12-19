@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Server.Core.PageModels.Account;
 using Server.Core.Services.Manager;
+using System.Security.Claims;
+using BlazorAuth.Server.Extensions;
+using Server.Core.Services;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
@@ -24,11 +28,15 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
     {
         private readonly IManager _manager;
         private readonly ILogger<LoginModel> _logger;
-
-        public LoginModel(IManager manager, ILogger<LoginModel> logger)
+        private readonly IAuthenticationManager _authenticationManager;
+        public LoginModel(
+            IManager manager, 
+            ILogger<LoginModel> logger, 
+            IAuthenticationManager authenticationManager)
         {
             _manager = manager;
             _logger = logger;
+            _authenticationManager = authenticationManager;
         }
 
         [BindProperty]
@@ -67,7 +75,14 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _manager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
-                {
+                {          
+                    var userDetails = await _authenticationManager.FindByUserEmail(Input.Email);                
+                    if (userDetails != null)
+                    {
+                        User.AddUserDetailClaim(userDetails);
+                        await _manager.AddClaimAsync(Input.Email, userDetails.GetClaims());
+                    }
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

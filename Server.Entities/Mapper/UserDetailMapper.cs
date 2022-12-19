@@ -1,23 +1,31 @@
 ﻿using BlazorAuth.Shared.Dtos;
 using Server.Entities.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Server.Entities.Mapper;
 public static class UserDetailMapper
 {
-    public static UserDetail MapToEntity(this UserDetailDto userDetailDto, string userId)
+    public static UserDetail MapToEntity(this UserDetailDto userDetailDto, string userId = "")
     {
         return new UserDetail()
         {
             FirstName = userDetailDto.FirstName,
             Surname = userDetailDto.Surname,
-            BirthDate = userDetailDto.BirthDate,
-            Gender = userDetailDto.Gender,
+            BirthDate = userDetailDto.BirthDate!.Value,
+            Gender = userDetailDto.Gender!.Value,
             UserId = userId,
+        };
+    }
+
+    public static UserDetailDto MapToDto(this UserDetail userDetail)
+    {
+        return new UserDetailDto()
+        {
+            FirstName = userDetail.FirstName,
+            Surname = userDetail.Surname,
+            BirthDate = userDetail.BirthDate,
+            Gender = userDetail.Gender,
+            UserId = userDetail.UserId,
         };
     }
 }

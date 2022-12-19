@@ -1,4 +1,6 @@
-﻿using Duende.IdentityServer.EntityFramework.Entities;
+﻿using BlazorAuth.Shared.Dtos;
+using BlazorAuth.Shared.Enums;
+using Duende.IdentityServer.EntityFramework.Entities;
 using Google.Apis.PeopleService.v1.Data;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +10,38 @@ namespace BlazorAuth.Server.Extensions;
 
 public static class ClaimsIdentityEntensions
 {
+    public static void AddUserDetailClaim(this ClaimsPrincipal claimsPrincipal, UserDetailDto userDetailDto)
+    {
+        var claimsIdentity = (ClaimsIdentity)claimsPrincipal.Identity;
+        if(claimsIdentity == null)
+        {
+            claimsIdentity = new ClaimsIdentity();
+        }
+        claimsIdentity.TryAddClaim(JwtClaimTypes.GivenName, userDetailDto.FirstName);
+        claimsIdentity.TryAddClaim(JwtClaimTypes.FamilyName, userDetailDto.Surname);
+
+        claimsIdentity.TryAddClaim(JwtClaimTypes.Name, $"{userDetailDto.FirstName} {userDetailDto.Surname}");
+
+        claimsIdentity.TryAddClaim(JwtClaimTypes.Id, userDetailDto.UserId);
+        claimsIdentity.TryAddClaim(JwtClaimTypes.Gender, userDetailDto.Gender!.Value.ToString());
+        claimsIdentity.TryAddClaim(JwtClaimTypes.BirthDate, userDetailDto.BirthDate!.Value.ToStringDate());
+
+        claimsPrincipal.AddIdentity(claimsIdentity);
+    }
+
+    public static IEnumerable<Claim> GetClaims(this UserDetailDto userDetailDto)
+    {
+        return new List<Claim>
+        {
+            new Claim(JwtClaimTypes.GivenName, userDetailDto.FirstName),
+            new Claim(JwtClaimTypes.FamilyName, userDetailDto.Surname),
+            new Claim(JwtClaimTypes.Name, $"{userDetailDto.FirstName} {userDetailDto.Surname}"),
+            new Claim(JwtClaimTypes.Id, userDetailDto.UserId),
+            new Claim(JwtClaimTypes.Gender, userDetailDto.Gender!.Value.ToString()),
+            new Claim(JwtClaimTypes.BirthDate, userDetailDto.BirthDate!.Value.ToStringDate())
+        }.AsEnumerable();
+    }
+
     public static void AddClaim(this ClaimsIdentity claimsIdentity, string type, string value)
     {
         if (claimsIdentity.HasClaim(type))
@@ -31,10 +65,6 @@ public static class ClaimsIdentityEntensions
         if (date?.Year.HasValue == true && date.Month.HasValue && date.Day.HasValue)
         {
             var dateStr = $"{date?.Year}-{(date.Month.ToString().Length == 1 ? $"0{date.Month}" : date.Month)}-{(date.Day.ToString().Length == 1 ? $"0{date.Day}" : date.Day)}";
-            if (dateStr.TryDateParse(out DateTime? value) && value.AgeIsValid(18))
-            {
-                claimsIdentity.AddClaim(type, dateStr);
-            }
         }
     }
 
@@ -53,8 +83,9 @@ public static class ClaimsIdentityEntensions
         var gender = person.Genders?.FirstOrDefault()?.FormattedValue;
         var birthDate = person.Birthdays?.FirstOrDefault(x => x.Date.Year.HasValue && x.Date.Month.HasValue && x.Date.Day.HasValue)?.Date;
 
-        claimsIdentity.TryAddClaim(JwtClaimTypes.Gender, gender);
-        claimsIdentity.TryAddClaim(JwtClaimTypes.BirthDate, birthDate);
+        //claimsIdentity.TryAddClaim(JwtClaimTypes.Gender, gender);
+        //claimsIdentity.TryAddClaim(JwtClaimTypes.BirthDate, birthDate);
+       
 
         var index = 0;
         foreach (var phone in person.PhoneNumbers ?? new List<PhoneNumber>())

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Server.Core.Model;
 using Server.Entities.Entities;
+using System.Security.Claims;
 
 namespace Server.Core.Services.Manager;
 
@@ -35,4 +36,5 @@ public interface IManager
     Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string code, string password);
 
     bool SupportsUserEmail();
+    Task<IdentityResult> AddClaimAsync(string email, IEnumerable<Claim> claims);
 }

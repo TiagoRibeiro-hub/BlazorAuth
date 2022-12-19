@@ -24,19 +24,34 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
     {
 
         private readonly IAuthenticationManager _authenticationManager;
-
-        public UserDetailModel(IAuthenticationManager authenticationManager)
+        private readonly IManager _manager;
+        public UserDetailModel(
+            IAuthenticationManager authenticationManager, 
+            IManager manager)
         {
             _authenticationManager = authenticationManager;
+            _manager = manager;
         }
 
         [BindProperty]
         public UserDetailDto UserDetail { get; set; }
         public string ReturnUrl { get; set; }
 
+        [TempData]
+        public string Details { get; set; }
+
+
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            var division = Details.IndexOf('/');
+            UserDetail = new UserDetailDto() 
+            { 
+                FirstName = Details.Substring(0, division),
+                Surname = Details.Substring(division + 1),
+                BirthDate = null,
+                Gender = null
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -46,7 +61,12 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             {
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var email = claimsIdentity.GetClaim(ClaimTypes.Email).Value;
-                _ = _authenticationManager.CreateUserDetail(email, UserDetail).ConfigureAwait(false);
+                var userDetails = await _authenticationManager.CreateUserDetail(email, UserDetail);
+                if(userDetails != null)
+                {
+                    User.AddUserDetailClaim(userDetails);
+                    await _manager.AddClaimAsync(email, userDetails.GetClaims());
+                }
                 return LocalRedirect(returnUrl);
             }
 

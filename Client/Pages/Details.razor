@@ -1,0 +1,51 @@
+﻿@page "/details"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Details</h3>
+@if(confirmAuth)
+{
+    <RedirectToLogin />
+}
+else
+{
+    <label>First Name</label>
+    <label>Surnamee</label>
+    <label>BirthDate</label>
+    <label>Gender</label>
+    <h3>@userDetailDto.FirstName</h3>
+    <h3>@userDetailDto.Surname</h3>
+    <h3>@birthDate</h3>
+    <h3>@gender</h3>
+}
+@code {
+    public UserDetailDto userDetailDto = new UserDetailDto();
+    private string birthDate;
+    private string gender;
+    private bool confirmAuth = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userDetailDto.FirstName = user.FindFirst(c => c.Type == "given_name")?.Value ?? string.Empty;
+            userDetailDto.Surname = user.FindFirst(c => c.Type == "family_name")?.Value ?? string.Empty;
+            birthDate = user.FindFirst(c => c.Type == "birthdate")?.Value ?? string.Empty;
+            gender = user.FindFirst(c => c.Type == "gender")?.Value ?? string.Empty;
+
+            if (string.IsNullOrEmpty(userDetailDto.FirstName) || string.IsNullOrEmpty(userDetailDto.Surname) || string.IsNullOrEmpty(birthDate) || string.IsNullOrEmpty(gender))
+            {
+                //get
+            }
+        }
+        else
+        {
+            confirmAuth = true;
+        }
+    }
+}

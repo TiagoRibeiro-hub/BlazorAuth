@@ -4,6 +4,7 @@ using Google.Apis.Services;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication;
 using BlazorAuth.Server.Extensions;
+using System.Security.Claims;
 
 namespace BlazorAuth.Server.Handler
 {

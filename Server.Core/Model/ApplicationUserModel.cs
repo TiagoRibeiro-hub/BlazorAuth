@@ -25,8 +25,8 @@ public sealed class ApplicationUserModel
         {
             FirstName = userDetailDto.FirstName,
             Surname = userDetailDto.Surname,
-            BirthDate = userDetailDto.BirthDate,
-            Gender = userDetailDto.Gender,
+            BirthDate = userDetailDto.BirthDate!.Value,
+            Gender = userDetailDto.Gender!.Value,
         };
     }
 }

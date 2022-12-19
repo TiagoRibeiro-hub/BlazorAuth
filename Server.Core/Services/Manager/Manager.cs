@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Server.Core.Model;
 using Server.Core.Services.Email;
 using Server.Entities.Entities;
+using System.Security.Claims;
 using System.Text;
 using static IdentityModel.OidcConstants;
 
@@ -89,4 +90,11 @@ public sealed class Manager : IManager
     public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string code, string password) => await _userManager.ResetPasswordAsync(user, code, password);
 
     public bool SupportsUserEmail() => _userManager.SupportsUserEmail;
+
+    public async Task<IdentityResult> AddClaimAsync(string email, IEnumerable<Claim> claims)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return await _userManager.AddClaimsAsync(user, claims);
+    }
+ 
 }

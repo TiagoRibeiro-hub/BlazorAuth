@@ -5,6 +5,7 @@ namespace BlazorAuth.Shared.Dtos;
 #nullable disable
 public sealed class UserDetailDto : BaseDto
 {
+
     [Required]
     public string FirstName { get; set; }
 
@@ -13,8 +14,10 @@ public sealed class UserDetailDto : BaseDto
 
     [Required]
     [DataType(DataType.Date)]
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     [Required]
-    public Gender Gender { get; set; }
+    public Gender? Gender { get; set; }
+
+    public string UserId { get; set; }
 }

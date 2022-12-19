@@ -4,6 +4,7 @@ using Server.Core.Model;
 using Server.Core.Services.Manager;
 using Microsoft.AspNetCore.Identity;
 using Server.Entities.Entities;
+using Server.Data.Repositories;
 
 namespace Server.Core.Services;
 
@@ -11,8 +12,9 @@ public class AuthenticationManager : IAuthenticationManager
 {
     private readonly IManager _manager;
     private readonly IUserDetailService _userDetailService;
+
     public AuthenticationManager(
-        IManager manager, 
+        IManager manager,
         IUserDetailService userDetailService)
     {
         _manager = manager;
@@ -23,7 +25,7 @@ public class AuthenticationManager : IAuthenticationManager
     {
         user.Detail = ApplicationUserModel.GetUserDetails(userDetailDto);
         var result = await _manager.CreateUser(user, input.Password);
-        
+
         var responseModel = new ResponseModel()
         {
             IdentityResult = result,
@@ -62,9 +64,22 @@ public class AuthenticationManager : IAuthenticationManager
         return await _userDetailService.HasUserDetail(user.Id);
     }
 
-    public async Task<bool> CreateUserDetail(string email, UserDetailDto userDetailDto)
+    public async Task<UserDetailDto> FindByUserEmail(string email)
     {
         var user = await _manager.FindByEmailAsync(email);
-        return await _userDetailService.CreateUserDetail(user.Id, userDetailDto);
+        return await _userDetailService.FindByUserId(user.Id);
     }
+
+    public async Task<UserDetailDto> CreateUserDetail(string email, UserDetailDto userDetailDto)
+    {
+        var user = await _manager.FindByEmailAsync(email);
+        if (await _userDetailService.CreateUserDetail(user.Id, userDetailDto))
+        {
+            userDetailDto.UserId = user.Id;
+            return userDetailDto;
+        }
+        return null;
+    }
+
+
 }

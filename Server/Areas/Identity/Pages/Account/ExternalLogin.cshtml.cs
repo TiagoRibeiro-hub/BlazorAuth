@@ -16,6 +16,8 @@ using Server.Entities.Entities;
 using Server.Core.Model;
 using static Duende.IdentityServer.Models.IdentityResources;
 using BlazorAuth.Server.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using BlazorAuth.Shared.Dtos;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
@@ -56,6 +58,9 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; }
 
+        [TempData]
+        public string Details { get; set; }
+
         public IActionResult OnGet() => RedirectToPage("./Login");
 
         public IActionResult OnPost(string provider, string returnUrl = null)
@@ -87,14 +92,30 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 var email = info.GetClaim(ClaimTypes.Email);
+
                 if (!string.IsNullOrEmpty(email))
                 {
                     var hasDetails = await _authenticationManager.HasUserDetail(email);
                     if (!hasDetails)
                     {
-                        return RedirectToPage("/Account/UserDetail");
+                       
+                        var givenName = info.GetClaim(ClaimTypes.GivenName) ?? "";
+                        var surname = info.GetClaim(ClaimTypes.Surname) ?? "";
+
+                        Details = string.Join("/", givenName , surname);
+        
+                        return RedirectToPage($"/Account/UserDetail");
                     }
-                }               
+                }
+                var userDetails = await _authenticationManager.FindByUserEmail(email);
+                if (userDetails != null)
+                {
+                    User.AddUserDetailClaim(userDetails);        
+                    await _manager.AddClaimAsync(email, userDetails.GetClaims());
+                    var props = new AuthenticationProperties();
+                    props.StoreTokens(info.AuthenticationTokens);
+                    props.IsPersistent = false;
+                }
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)

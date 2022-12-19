@@ -18,10 +18,33 @@ public sealed class BaseRepository : IBaseRepository
     }
 
     public async Task<bool> Exists<TEntity>(Expression<Func<TEntity, bool>> predicate)
-        where TEntity : BaseEntity => await _context.Set<TEntity>().AnyAsync(predicate);
+        where TEntity : BaseEntity
+    {
+        try
+        {
+           return await _context.Set<TEntity>().AnyAsync(predicate);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
+    public async Task<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> predicate) 
+        where TEntity : BaseEntity
+    {
+        try
+        {
+            return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        }
+        catch (Exception)
+        {
+          throw;
+        }
+    }
 
-    public async Task<bool> AddWithCheck<TEntity>(TEntity entity) where TEntity : BaseEntity
+    public async Task<bool> AddWithCheck<TEntity>(TEntity entity) 
+        where TEntity : BaseEntity
     {
         try
         {
@@ -35,5 +58,7 @@ public sealed class BaseRepository : IBaseRepository
             return false;
         }
     }
+
+
 }
 

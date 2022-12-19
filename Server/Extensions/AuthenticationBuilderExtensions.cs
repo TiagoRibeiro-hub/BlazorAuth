@@ -25,16 +25,16 @@ public static class AuthenticationBuilderExtensions
             options.Scope.Add(PeopleServiceService.Scope.UserGenderRead);
             options.Scope.Add(PeopleServiceService.Scope.UserPhonenumbersRead);
 
-            options.AccessType = "offline";
-            options.UsePkce = true;
-            options.SaveTokens = true;
-
             options.ClaimActions.Clear();
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.NameIdentifier, JwtClaimTypes.Id, "string");
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Name, JwtClaimTypes.Name, "string");
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.GivenName, JwtClaimTypes.GivenName, "string");
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Surname, JwtClaimTypes.FamilyName, "string");
             options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Email, JwtClaimTypes.Email, "string");
+
+            options.AccessType = "offline";
+            options.UsePkce = true;
+            options.SaveTokens = true;
 
             var googleHandler = new GoogleAuthHandler();
 
