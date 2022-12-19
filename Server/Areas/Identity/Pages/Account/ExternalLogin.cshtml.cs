@@ -108,7 +108,7 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 if (userDetails != null)
                 {
                     User.AddUserDetailClaim(userDetails);        
-                    await _manager.AddClaimAsync(email, userDetails.GetClaims());
+                    await _manager.AddClaimByUserEmailAsync(email, userDetails.GetClaims());
                     var props = new AuthenticationProperties();
                     props.StoreTokens(info.AuthenticationTokens);
                     props.IsPersistent = false;

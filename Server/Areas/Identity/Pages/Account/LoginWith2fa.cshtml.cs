@@ -2,18 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Server.Entities.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Server.Core.PageModels.Account;
 using Server.Core.Services.Manager;
+using BlazorAuth.Server.Extensions;
+using Server.Core.Services;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
@@ -21,11 +15,15 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
     {
         private readonly IManager _manager;
         private readonly ILogger<LoginWith2faModel> _logger;
-
-        public LoginWith2faModel(IManager manager, ILogger<LoginWith2faModel> logger)
+        private readonly IAuthenticationManager _authenticationManager;
+        public LoginWith2faModel(
+            IManager manager, 
+            ILogger<LoginWith2faModel> logger, 
+            IAuthenticationManager authenticationManager)
         {
             _manager = manager;
             _logger = logger;
+            _authenticationManager = authenticationManager;
         }
 
         [BindProperty]
@@ -70,6 +68,12 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 
             if (result.Succeeded)
             {
+                var userDetails = await _authenticationManager.FindByUserId(userId);
+                if (userDetails != null)
+                {
+                    User.AddUserDetailClaim(userDetails);
+                    await _manager.AddClaimByUserIdAsync(userId, userDetails.GetClaims());
+                }
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", userId);
                 return LocalRedirect(returnUrl);
             }

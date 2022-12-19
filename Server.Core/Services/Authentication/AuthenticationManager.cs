@@ -5,6 +5,7 @@ using Server.Core.Services.Manager;
 using Microsoft.AspNetCore.Identity;
 using Server.Entities.Entities;
 using Server.Data.Repositories;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace Server.Core.Services;
 
@@ -70,6 +71,7 @@ public class AuthenticationManager : IAuthenticationManager
         return await _userDetailService.FindByUserId(user.Id);
     }
 
+
     public async Task<UserDetailDto> CreateUserDetail(string email, UserDetailDto userDetailDto)
     {
         var user = await _manager.FindByEmailAsync(email);
@@ -81,5 +83,6 @@ public class AuthenticationManager : IAuthenticationManager
         return null;
     }
 
+    public async Task<UserDetailDto> FindByUserId(string userId) => await _userDetailService.FindByUserId(userId);
 
 }

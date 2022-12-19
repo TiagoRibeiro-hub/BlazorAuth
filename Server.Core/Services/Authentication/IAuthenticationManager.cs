@@ -13,4 +13,5 @@ public interface IAuthenticationManager
     Task<bool> HasUserDetail(string email);
     Task<UserDetailDto> FindByUserEmail(string email);
     Task<UserDetailDto> CreateUserDetail(string email, UserDetailDto userDetailDto);
+    Task<UserDetailDto> FindByUserId(string userId);
 }

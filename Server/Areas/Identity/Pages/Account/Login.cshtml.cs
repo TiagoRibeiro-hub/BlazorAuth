@@ -80,7 +80,7 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                     if (userDetails != null)
                     {
                         User.AddUserDetailClaim(userDetails);
-                        await _manager.AddClaimAsync(Input.Email, userDetails.GetClaims());
+                        await _manager.AddClaimByUserEmailAsync(Input.Email, userDetails.GetClaims());
                     }
 
                     _logger.LogInformation("User logged in.");
