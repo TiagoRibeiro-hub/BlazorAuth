@@ -4,23 +4,27 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>Details</h3>
-@if(confirmAuth)
+
+@if (confirmAuth)
 {
     <RedirectToLogin />
 }
 else
 {
-    <label>First Name</label>
-    <label>Surnamee</label>
-    <label>BirthDate</label>
-    <label>Gender</label>
-    <h3>@userDetailDto.FirstName</h3>
-    <h3>@userDetailDto.Surname</h3>
-    <h3>@birthDate</h3>
-    <h3>@gender</h3>
+    <div class="row d-flex mt-4 ms-4">
+        <div class="col-3">
+            <p><b>First Name:</b> @userDetailDto.FirstName</p>
+            <p><b>Surname:</b> @userDetailDto.Surname</p>
+            <p><b>Birth Date:</b> @birthDate</p>
+            <p><b>Gender:</b> @gender</p>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
 }
 @code {
-    public UserDetailDto userDetailDto = new UserDetailDto();
+    private UserDetailDto userDetailDto = new UserDetailDto();
     private string birthDate;
     private string gender;
     private bool confirmAuth = false;

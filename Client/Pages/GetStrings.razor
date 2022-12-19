@@ -1,6 +1,90 @@
 ﻿@page "/getstrings"
+@using System.ComponentModel.DataAnnotations;
+
 <h3>GetStrings</h3>
+<div class="d-flex justify-content-center mt-4">
+    <EditForm Model="@numberModel" OnValidSubmit="@HandleValidSubmit" class="w-25">
+        <DataAnnotationsValidator />
+        <label for="inputNumber">Choose a number:</label>
+        <InputNumber id="inputNumber" class="form-control w-100" @bind-Value="numberModel.Value" />
+        <ValidationSummary class="mt-1"/>
+        <button class="btn btn-primary mt-2" type="submit">Accept</button>
+    </EditForm>
+</div>
+@if (Show)
+{
+    <div class="m-5">
+        <RadzenDataGrid Data="@ArrayStr" TItem="StringValue" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+                    PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left"
+                    ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="StringValue" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+}
+
 
 @code {
 
+    public class NumberModel
+    {
+        [Required]
+        [Range(1, 500)]
+        public int Value { get; set; }
+    }
+
+    public class StringValue
+    {
+        public string Value { get; set; }
+    }
+
+    private NumberModel numberModel = new();
+    private StringValue[] ArrayStr;
+    private bool Show = false;
+
+    async Task HandleValidSubmit()
+    {
+        await SetArrayStr(numberModel);
+        if (ArrayStr.Any())
+        {
+            Show = true;
+        }
+    }
+
+    private Task SetArrayStr(NumberModel numberModel)
+    {
+        Random rd = new Random();
+        ArrayStr = new StringValue[numberModel.Value];
+        for (int i = 0; i < numberModel.Value; i++)
+        {
+            int count = 1;
+            var str = "";
+            while (count < 11)
+            {
+                int num = 33;
+                if (count == 2)
+                {
+                    num = 65;
+                }
+                else if (count == 9)
+                {
+                    num = 66;
+                }
+                else
+                {
+                    num = rd.Next(33, 126);
+                    if (num == 96)
+                    {
+                        num = rd.Next(33, 126);
+                    }
+                }
+                str += Convert.ToChar(num);
+                count += 1;
+            }
+            ArrayStr[i] = new StringValue() { Value = str };
+        }
+
+        return Task.CompletedTask;
+    }
 }

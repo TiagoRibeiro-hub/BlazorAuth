@@ -97,13 +97,10 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 {
                     var hasDetails = await _authenticationManager.HasUserDetail(email);
                     if (!hasDetails)
-                    {
-                       
+                    {                    
                         var givenName = info.GetClaim(ClaimTypes.GivenName) ?? "";
                         var surname = info.GetClaim(ClaimTypes.Surname) ?? "";
-
                         Details = string.Join("/", givenName , surname);
-        
                         return RedirectToPage($"/Account/UserDetail");
                     }
                 }
