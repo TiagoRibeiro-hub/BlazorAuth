@@ -18,10 +18,12 @@ namespace Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new UserDetailConfig());
+            builder.ApplyConfiguration(new StringValueConfig());
 
             base.OnModelCreating(builder);
         }
 
         public DbSet<UserDetail> UserDetails { get; set; }
+        public DbSet<StringValue> StringValues { get; set; }
     }
 }

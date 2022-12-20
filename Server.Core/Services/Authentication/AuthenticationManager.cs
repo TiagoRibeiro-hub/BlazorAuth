@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Server.Entities.Entities;
 using Server.Data.Repositories;
 using static Duende.IdentityServer.Models.IdentityResources;
+using Server.Entities.Constants;
 
 namespace Server.Core.Services;
 
@@ -35,6 +36,7 @@ public class AuthenticationManager : IAuthenticationManager
         {
             responseModel.EmailConfimationToken = await _manager.GenerateEmailConfirmationTokenAsync(user);
             responseModel.User = user;
+            await _manager.AddToRoleAsync(user, Role.UserSendys);
         }
         return responseModel;
     }

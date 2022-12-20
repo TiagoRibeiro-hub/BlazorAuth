@@ -1,0 +1,41 @@
+﻿@page "/allstrings"
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "AdminSendys")]
+
+<h3>All Strings</h3>
+   
+@if (Show)
+{
+<div class="m-5">
+        <RadzenDataGrid Data="@ArrayStr" TItem="StringValue" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+                    PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left"
+                    ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="StringValue" Property="UserName" Filterable="false" Title="User Name" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="StringValue" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+}
+
+
+@code {
+
+
+    public class StringValue
+    {
+        public string UserName { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class AllString
+    {
+        public StringValue[] ArrayStr { get; set; }
+    }
+
+    private StringValue[] ArrayStr;
+    private bool Show = false;
+
+
+}

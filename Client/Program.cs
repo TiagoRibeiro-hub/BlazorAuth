@@ -1,4 +1,5 @@
 using BlazorAuth.Client;
+using BlazorAuth.Client.Extensions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -15,6 +16,8 @@ builder.Services.AddHttpClient("BlazorAuth.ServerAPI", client => client.BaseAddr
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorAuth.ServerAPI"));
 
 builder.Services.AddApiAuthorization();
+
+builder.Services.AddSendysServices(builder.HostEnvironment.BaseAddress);
 
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();

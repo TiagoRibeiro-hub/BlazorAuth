@@ -14,8 +14,9 @@ builder.Services.AddIdentity();
 
 builder.Services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-
 builder.Services.AddAuthentication(builder.Configuration);
+
+builder.Services.AddPolicies();
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
@@ -25,6 +26,8 @@ builder.Services.AddEmailService(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+
 
 var app = builder.Build();
 
@@ -56,5 +59,7 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+await app.RegisterRoles();
 
 app.Run();

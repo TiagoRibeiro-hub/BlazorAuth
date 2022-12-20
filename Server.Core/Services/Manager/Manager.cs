@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Server.Core.Model;
 using Server.Core.Services.Email;
+using Server.Entities.Constants;
 using Server.Entities.Entities;
 using System.Security.Claims;
 using System.Text;
@@ -123,6 +124,8 @@ public sealed class Manager : IManager
     public async Task<IdentityResult> ResetAuthenticatorKeyAsync(ApplicationUser user) => await _userManager.ResetAuthenticatorKeyAsync(user);
 
     public async Task<string> GetEmailAsync(ApplicationUser user) => await _userManager.GetEmailAsync(user);
+
+    public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role) => await _userManager.AddToRoleAsync(user, role);
 
     #endregion
 }

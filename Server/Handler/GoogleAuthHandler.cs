@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace BlazorAuth.Server.Handler
 {
-    public class GoogleAuthHandler
+    public sealed class GoogleAuthHandler
     {
         public Task HandleOnCreatingTicket(OAuthCreatingTicketContext context)
         {

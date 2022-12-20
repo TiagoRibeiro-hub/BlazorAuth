@@ -1,7 +1,14 @@
 ﻿@page "/getstrings"
 @using System.ComponentModel.DataAnnotations;
+@using BlazorAuth.Client.Services.Sendys;
+@using Microsoft.AspNetCore.Authorization;
 
-<h3>GetStrings</h3>
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISendysServices ISendysServices
+
+@attribute [Authorize(Policy = "User")]
+
+<h3>Get Strings</h3>
 <div class="d-flex justify-content-center mt-4">
     <EditForm Model="@numberModel" OnValidSubmit="@HandleValidSubmit" class="w-25">
         <DataAnnotationsValidator />
@@ -23,7 +30,9 @@
         </RadzenDataGrid>
     </div>
 }
-
+<div class="d-flex justify-content-end mt-3 me-3">
+        <button class="btn btn-primary mt-2" type="submit" @onclick="SaveStrings">Accept</button>
+</div>
 
 @code {
 
@@ -36,12 +45,20 @@
 
     public class StringValue
     {
+        public string UserName { get; set; }
         public string Value { get; set; }
     }
 
     private NumberModel numberModel = new();
     private StringValue[] ArrayStr;
     private bool Show = false;
+    private string UserName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        UserName = authState.User.Identity?.Name;
+    }
 
     async Task HandleValidSubmit()
     {
@@ -52,6 +69,10 @@
         }
     }
 
+    async Task SaveStrings()
+    {
+        await ISendysServices.SaveStrings();
+    }
     private Task SetArrayStr(NumberModel numberModel)
     {
         Random rd = new Random();
@@ -82,9 +103,8 @@
                 str += Convert.ToChar(num);
                 count += 1;
             }
-            ArrayStr[i] = new StringValue() { Value = str };
+            ArrayStr[i] = new StringValue() { UserName = UserName, Value = str };
         }
-
         return Task.CompletedTask;
     }
-}
+   }

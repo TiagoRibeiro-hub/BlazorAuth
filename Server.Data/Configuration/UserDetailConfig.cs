@@ -22,10 +22,10 @@ namespace Server.Data.Configuration
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => new { x.FirstName, x.Surname});
 
-            builder.ToTable("UserDetail");
+            builder.ToTable("UserDetails");
 
             builder.HasOne(x => x.User).WithOne(x => x.Detail).HasForeignKey<UserDetail>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
 
         }
-    }
+    }    
 }

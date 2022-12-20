@@ -12,7 +12,7 @@ using Server.Data;
 namespace Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221218123009_add_migration_1")]
+    [Migration("20221220205523_add_migration_1")]
     partial class add_migration_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,10 +245,12 @@ namespace Server.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -285,10 +287,12 @@ namespace Server.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -361,6 +365,35 @@ namespace Server.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Server.Entities.Entities.StringValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("UniqueIdentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Value");
+
+                    b.ToTable("StringValue", (string)null);
                 });
 
             modelBuilder.Entity("Server.Entities.Entities.UserDetail", b =>
@@ -454,6 +487,17 @@ namespace Server.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Server.Entities.Entities.StringValue", b =>
+                {
+                    b.HasOne("Server.Entities.Entities.ApplicationUser", "User")
+                        .WithMany("StringValues")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Server.Entities.Entities.UserDetail", b =>
                 {
                     b.HasOne("Server.Entities.Entities.ApplicationUser", "User")
@@ -468,6 +512,8 @@ namespace Server.Data.Migrations
                 {
                     b.Navigation("Detail")
                         .IsRequired();
+
+                    b.Navigation("StringValues");
                 });
 #pragma warning restore 612, 618
         }
