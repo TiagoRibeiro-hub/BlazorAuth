@@ -1,7 +1,8 @@
 using BlazorAuth.Client;
-using BlazorAuth.Client.CustomUserFactory;
+using BlazorAuth.Client.Auth.CustomUserFactory;
 using BlazorAuth.Client.Extensions;
 using BlazorAuth.Shared;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -24,6 +25,9 @@ builder.Services.AddApiAuthorization();
 builder.Services.AddApiAuthorization().AddAccountClaimsPrincipalFactory<CustomUserFactory>();
 
 builder.Services.AddSendysServices(builder.HostEnvironment.BaseAddress);
+
+//builder.Services.AddBlazoredLocalStorage();
+
 
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
