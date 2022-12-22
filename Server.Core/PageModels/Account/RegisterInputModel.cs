@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Server.Entities.Constants;
+using System.ComponentModel.DataAnnotations;
 #nullable disable
 namespace Server.Core.PageModels.Account;
 
@@ -10,9 +11,9 @@ public class RegisterInputModel
     public string Email { get; set; }
 
     [Required]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     [DataType(DataType.Password)]
     [Display(Name = "Password")]
+    [RegularExpression(RegularExpressions.PasswordRegex, ErrorMessage = "Password must contain at least 12 characters, 1 upper case letter, 1 lower case letter, 1 digit and 1 special character!")]
     public string Password { get; set; }
 
 

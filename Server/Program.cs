@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Entities.Entities;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,9 @@ builder.Services.AddIdentity();
 
 builder.Services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-builder.Services.AddAuthentication(builder.Configuration);
-
 builder.Services.AddPolicies();
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();

@@ -1,4 +1,5 @@
 ﻿using BlazorAuth.Shared.Enums;
+using Server.Entities.Constants;
 using System.ComponentModel.DataAnnotations;
 #nullable disable
 namespace Server.Core.PageModels.Account;
@@ -6,11 +7,11 @@ namespace Server.Core.PageModels.Account;
 public sealed class RegisterUserDetailInputModel
 {
     [Required(AllowEmptyStrings = false)]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+    [RegularExpression(RegularExpressions.NameRegex, ErrorMessage = "Name can only contain letters")]
     public string FirstName { get; set; }
 
     [Required(AllowEmptyStrings = false)]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+    [RegularExpression(RegularExpressions.NameRegex, ErrorMessage = "Surname can only contain letters")]
     public string Surname { get; set; }
 
 

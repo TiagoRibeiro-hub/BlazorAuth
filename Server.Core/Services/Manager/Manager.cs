@@ -127,5 +127,8 @@ public sealed class Manager : IManager
 
     public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role) => await _userManager.AddToRoleAsync(user, role);
 
+    public async Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles) => await _userManager.AddToRolesAsync(user, roles);
+
+    public async Task<bool> IsInRoleAsync(ApplicationUser user, string role) => await _userManager.IsInRoleAsync(user, role);
     #endregion
 }

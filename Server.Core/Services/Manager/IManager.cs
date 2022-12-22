@@ -51,5 +51,7 @@ public interface IManager
     Task<IdentityResult> ResetAuthenticatorKeyAsync(ApplicationUser user);
     Task<string> GetEmailAsync(ApplicationUser user);
     Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role);
+    Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles);
+    Task<bool> IsInRoleAsync(ApplicationUser user, string role);
     #endregion
 }

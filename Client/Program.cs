@@ -3,6 +3,8 @@ using BlazorAuth.Client.Extensions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Radzen;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -15,6 +17,7 @@ builder.Services.AddHttpClient("BlazorAuth.ServerAPI", client => client.BaseAddr
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorAuth.ServerAPI"));
 
+builder.Services.AddAuthorizationCore();
 builder.Services.AddApiAuthorization();
 
 builder.Services.AddSendysServices(builder.HostEnvironment.BaseAddress);

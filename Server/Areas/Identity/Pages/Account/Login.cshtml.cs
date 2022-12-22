@@ -21,6 +21,8 @@ using System.Security.Claims;
 using BlazorAuth.Server.Extensions;
 using Server.Core.Services;
 using static Duende.IdentityServer.Models.IdentityResources;
+using System.Text.Encodings.Web;
+using Server.Entities.Constants;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {
@@ -82,7 +84,6 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                         User.AddUserDetailClaim(userDetails);
                         await _manager.AddClaimByUserEmailAsync(Input.Email, userDetails.GetClaims());
                     }
-
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
@@ -94,6 +95,11 @@ namespace BlazorAuth.Server.Areas.Identity.Pages.Account
                 {
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
+                }
+
+                if (_manager.RequireConfirmedAccount())
+                {
+                    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                 }
                 else
                 {

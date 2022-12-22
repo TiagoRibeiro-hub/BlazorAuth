@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 namespace Server.Entities.Constants;
 public static class Constants
 {
+    public const string Admin = "Admin";
+    public const string User = "User";
 
-}
-
-public static class Role
-{
-    public const string AdminSendys = "AdminSendys";
-    public const string UserSendys = "UserSendys";
+    public const string Sendys = "Sendys";
 }

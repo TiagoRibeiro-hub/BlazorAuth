@@ -1,41 +1,102 @@
 ﻿@page "/allstrings"
 @using System.ComponentModel.DataAnnotations;
+@using BlazorAuth.Client.Services.Sendys;
 @using Microsoft.AspNetCore.Authorization;
-@attribute [Authorize(Roles = "AdminSendys")]
+
+@inject ISendysServices ISendysServices
+@inject NavigationManager NavManager
+
+@*@attribute [Authorize(Roles = "AdminSendys")]*@
 
 <h3>All Strings</h3>
-   
+<div class="row d-flex justify-content-center mt-4">
+    <div class="row d-flex justify-content-center w-50">
+        <div class="d-flex justify-content-center">
+            <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="form-control w-50 mt-1"
+                            Placeholder="Select..." Data=@UserList TextProperty="FullName" ValueProperty="Email" Change=@(args => OnChange(args)) />
+        </div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            @if (!string.IsNullOrEmpty(Message))
+            {
+                <label class="text-danger mt-1">@Message</label>
+            }
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center w-50">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary mt-2" type="submit" @onclick="HandleValidSubmit">Accept</button>
+        </div>
+    </div>
+</div>
 @if (Show)
 {
-<div class="m-5">
-        <RadzenDataGrid Data="@ArrayStr" TItem="StringValue" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+    <div class="m-5">
+        <RadzenDataGrid Data="@ArrayStr" TItem="StringValueDto" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
                     PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
-                <RadzenDataGridColumn TItem="StringValue" Property="UserName" Filterable="false" Title="User Name" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn TItem="StringValue" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="StringValueDto" Property="UserName" Filterable="false" Title="User Name" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="StringValueDto" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
             </Columns>
         </RadzenDataGrid>
     </div>
 }
-
+<button class="btn btn-primary btn-backTo" @onclick="BackToSendys">Back To Sendys Menu</button>
 
 @code {
+    public string Email = "";
+    public string Message = "";
 
+    private List<UserDetailDto> UserList = new();
 
-    public class StringValue
-    {
-        public string UserName { get; set; }
-        public string Value { get; set; }
-    }
+    private List<StringValueDto> ArrayStr = new();
 
-    public class AllString
-    {
-        public StringValue[] ArrayStr { get; set; }
-    }
-
-    private StringValue[] ArrayStr;
     private bool Show = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ISendysServices.GetAllUsersDetails();
+        if (result != null)
+        {
+            UserList = result;
+        }
+    }
 
+    void OnChange(object value)
+    {
+        var propValue = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
+        if (propValue != null)
+        {
+            Email = propValue.ToString()!;
+        }
+        else
+        {
+            //
+        }
+    }
+
+    async Task HandleValidSubmit()
+    {
+        IEnumerable<StringValueDto> result = null;
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            Message = "Select one User";
+        }
+        else
+        {
+            result = await ISendysServices.GetAllStringValues(Email);
+            if (result != null)
+            {
+                ArrayStr = result.ToList();
+                Show = true;
+            }
+        }
+    }
+
+    async Task BackToSendys()
+    {
+        NavManager.NavigateTo("sendys");
+    }
 }

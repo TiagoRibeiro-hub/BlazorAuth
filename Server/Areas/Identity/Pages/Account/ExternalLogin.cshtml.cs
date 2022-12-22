@@ -18,6 +18,7 @@ using static Duende.IdentityServer.Models.IdentityResources;
 using BlazorAuth.Server.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using BlazorAuth.Shared.Dtos;
+using Server.Entities.Constants;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {

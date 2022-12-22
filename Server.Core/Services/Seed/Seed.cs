@@ -36,7 +36,15 @@ namespace Server.Core.Services.Seed
             var email = "sendysauth@gmail.com"; //
             var user = await _userManager.FindByEmailAsync(email);
 
-            if(user == null)
+
+            if (!await _roleManager.RoleExistsAsync(Role.Sendys))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Role.Sendys));
+                await _roleManager.CreateAsync(new IdentityRole(Role.Admin));
+                await _roleManager.CreateAsync(new IdentityRole(Role.User));
+            }
+
+            if (user == null)
             {
                 user = ApplicationUserModel.CreateUser();
 
@@ -53,13 +61,10 @@ namespace Server.Core.Services.Seed
                 await userStore;
                 await _userManager.CreateAsync(user, "Admin@1234");
 
-                if (!await _roleManager.RoleExistsAsync(Role.AdminSendys))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(Role.AdminSendys));
-                    await _roleManager.CreateAsync(new IdentityRole(Role.UserSendys));
-                }
+                await _userManager.AddToRolesAsync(user, new[] { Role.Sendys, Role.Admin });
 
-                await _userManager.AddToRoleAsync(user, Role.AdminSendys);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _userManager.ConfirmEmailAsync(user, token);
             }
 
         }

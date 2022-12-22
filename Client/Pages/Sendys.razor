@@ -1,0 +1,32 @@
+﻿@page "/sendys"
+
+@inject NavigationManager NavManager
+
+<div class="d-flex justify-content-around">
+    <div class="box" @onclick="Details">
+        <label class="box-label">Details</label>
+    </div>
+    <div class="box" @onclick="GetStrings">
+        <label class="box-label">Get Strings</label>
+
+    </div>
+    <div class="box" @onclick="AllStrings">
+        <label class="box-label">All Strings</label>
+
+    </div>
+</div>
+
+@code {
+    async Task Details()
+    {
+        NavManager.NavigateTo("details");
+    }    
+    async Task GetStrings()
+    {
+        NavManager.NavigateTo("getstrings");
+    }    
+    async Task AllStrings()
+    {
+        NavManager.NavigateTo("allstrings");
+    }    
+}

@@ -36,7 +36,7 @@ public class AuthenticationManager : IAuthenticationManager
         {
             responseModel.EmailConfimationToken = await _manager.GenerateEmailConfirmationTokenAsync(user);
             responseModel.User = user;
-            await _manager.AddToRoleAsync(user, Role.UserSendys);
+            await _manager.AddToRolesAsync(user, new[] { Role.Sendys, Role.User });
         }
         return responseModel;
     }
@@ -57,6 +57,7 @@ public class AuthenticationManager : IAuthenticationManager
                 responseModel.EmailConfimationToken = await _manager.GenerateEmailConfirmationTokenAsync(user);
             }
             responseModel.User = user;
+            await _manager.AddToRolesAsync(user, new[] { Role.Sendys, Role.User });
         }
         return responseModel;
     }

@@ -4,6 +4,7 @@ using Duende.IdentityServer.EntityFramework.Entities;
 using Google.Apis.PeopleService.v1.Data;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
+using Server.Entities.Constants;
 using System.Security.Claims;
 
 namespace BlazorAuth.Server.Extensions;
@@ -38,7 +39,7 @@ public static class ClaimsIdentityEntensions
             new Claim(JwtClaimTypes.Name, $"{userDetailDto.FirstName} {userDetailDto.Surname}"),
             new Claim(JwtClaimTypes.Id, userDetailDto.UserId),
             new Claim(JwtClaimTypes.Gender, userDetailDto.Gender!.Value.ToString()),
-            new Claim(JwtClaimTypes.BirthDate, userDetailDto.BirthDate!.Value.ToStringDate())
+            new Claim(JwtClaimTypes.BirthDate, userDetailDto.BirthDate!.Value.ToStringDate()),
         }.AsEnumerable();
     }
 

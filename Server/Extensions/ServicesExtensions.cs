@@ -1,5 +1,6 @@
 ﻿using BlazorAuth.Server.Handler;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -7,6 +8,7 @@ using Server.Core.Services;
 using Server.Core.Services.Email;
 using Server.Core.Services.Manager;
 using Server.Core.Services.Seed;
+using Server.Core.Services.Sendys;
 using Server.Data;
 using Server.Data.Repositories;
 using Server.Entities.Constants;
@@ -57,31 +59,40 @@ public static class ServicesExtensions
 
     public static IServiceCollection AddPolicies(this IServiceCollection services)
     {
-        return services.AddAuthorization(options =>
+        services.AddTransient<IAuthorizationHandler, AdminAuthorizationHandler>();
+        services.AddTransient<IAuthorizationHandler, UserAuthorizationHandler>();
+        services.AddTransient<IAuthorizationHandler, SendysAuthorizationHandler>();
+
+        services.AddAuthorization(options =>
         {
-            options.AddPolicy("Sendys", policy =>
+            options.AddPolicy(Policy.Sendys, policy =>
             {
-                policy.Requirements.Add(new SendysPolicyHandler());
-            });           
-            
-            options.AddPolicy("Admin", policy =>
+                policy.Requirements.Add(new SendysAuthorize());
+            });
+
+            options.AddPolicy(Policy.Admin, policy =>
             {
-                policy.RequireRole(new string[] { Role.AdminSendys });
-            });            
-            
-            options.AddPolicy("User", policy =>
+                policy.Requirements.Add(new AdminAuthorize());
+            });
+
+            options.AddPolicy(Policy.User, policy =>
             {
-                policy.RequireRole(new string[] { Role.AdminSendys, Role.UserSendys });
+                policy.Requirements.Add(new UserAuthorize());
             });
         });
+
+        return services;
     }
 
-    public static void AddServices(this IServiceCollection services)
+    public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ISeed, Seed>();
         services.AddScoped<IManager, Manager>();
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
         services.AddScoped<IUserDetailService, UserDetailService>();
+        services.AddScoped<ISendysService, SendysService>();
+
+        return services;
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -89,10 +100,12 @@ public static class ServicesExtensions
         services.AddScoped<IBaseRepository, BaseRepository>();
     }
 
-    public static void AddEmailService(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddEmailService(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<EmailOptions>(configuration.GetSection("EmailOptions"));
         services.AddTransient<IEmailSender, EmailSender>();
+
+        return services;
     }
 
 

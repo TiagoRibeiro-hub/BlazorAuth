@@ -5,64 +5,74 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISendysServices ISendysServices
+@inject NavigationManager NavManager
 
-@attribute [Authorize(Policy = "User")]
+@*@attribute [Authorize(Policy = "User")]*@
 
 <h3>Get Strings</h3>
 <div class="d-flex justify-content-center mt-4">
-    <EditForm Model="@numberModel" OnValidSubmit="@HandleValidSubmit" class="w-25">
+    <EditForm Model="@inputModel" OnValidSubmit="@HandleValidSubmit" class="w-25">
         <DataAnnotationsValidator />
         <label for="inputNumber">Choose a number:</label>
-        <InputNumber id="inputNumber" class="form-control w-100" @bind-Value="numberModel.Value" />
-        <ValidationSummary class="mt-1"/>
+        <InputNumber id="inputNumber" class="form-control w-100" @bind-Value="inputModel.Number" />
+        <ValidationSummary class="mt-1" />
         <button class="btn btn-primary mt-2" type="submit">Accept</button>
     </EditForm>
 </div>
 @if (Show)
 {
     <div class="m-5">
-        <RadzenDataGrid Data="@ArrayStr" TItem="StringValue" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+        <RadzenDataGrid Data="@ArrayStr" TItem="StringValueDto" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
                     PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left"
                     ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
-                <RadzenDataGridColumn TItem="StringValue" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="StringValueDto" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
             </Columns>
         </RadzenDataGrid>
     </div>
+    @if (!IsSaved)
+    {
+        <div class="d-flex justify-content-end mt-3 me-5">
+            <button class="btn btn-primary mt-2" type="submit" @onclick="SaveStrings">Save</button>
+        </div>    
+    }
 }
-<div class="d-flex justify-content-end mt-3 me-3">
-        <button class="btn btn-primary mt-2" type="submit" @onclick="SaveStrings">Accept</button>
-</div>
-
+<button class="btn btn-primary btn-backTo" @onclick="BackToSendys">Back To Sendys Menu</button>
 @code {
 
-    public class NumberModel
+    public class InputModel
     {
         [Required]
         [Range(1, 500)]
-        public int Value { get; set; }
+        public int Number { get; set; }
     }
 
-    public class StringValue
-    {
-        public string UserName { get; set; }
-        public string Value { get; set; }
-    }
 
-    private NumberModel numberModel = new();
-    private StringValue[] ArrayStr;
+    private InputModel inputModel = new();
+    private StringValueDto[] ArrayStr;
     private bool Show = false;
-    private string UserName;
+    private bool IsSaved = false;
+    private string UserId;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        UserName = authState.User.Identity?.Name;
+        UserId = authState.User.FindFirst(c => c.Type == "id")?.Value ?? "";
+        if (string.IsNullOrEmpty(UserId))
+        {
+            var userEmail = authState.User.FindFirst(c => c.Type == "preferred_username")?.Value ?? string.Empty;
+            var userId = await ISendysServices.GetUserId(userEmail);
+            if (string.IsNullOrEmpty(userId))
+            {
+
+            }
+            UserId = userId;
+        }
     }
 
     async Task HandleValidSubmit()
     {
-        await SetArrayStr(numberModel);
+        await SetArrayStr(inputModel);
         if (ArrayStr.Any())
         {
             Show = true;
@@ -71,13 +81,22 @@
 
     async Task SaveStrings()
     {
-        await ISendysServices.SaveStrings();
+        if (ArrayStr.Any())
+        {
+            IsSaved = await ISendysServices.SaveStrings(ArrayStr);
+        }
     }
-    private Task SetArrayStr(NumberModel numberModel)
+
+    async Task BackToSendys()
+    {
+        NavManager.NavigateTo("sendys");
+    }
+
+    private Task SetArrayStr(InputModel inputModel)
     {
         Random rd = new Random();
-        ArrayStr = new StringValue[numberModel.Value];
-        for (int i = 0; i < numberModel.Value; i++)
+        ArrayStr = new StringValueDto[inputModel.Number];
+        for (int i = 0; i < inputModel.Number; i++)
         {
             int count = 1;
             var str = "";
@@ -103,8 +122,8 @@
                 str += Convert.ToChar(num);
                 count += 1;
             }
-            ArrayStr[i] = new StringValue() { UserName = UserName, Value = str };
+            ArrayStr[i] = new StringValueDto() { UserId = UserId, Value = str };
         }
         return Task.CompletedTask;
     }
-   }
+}
