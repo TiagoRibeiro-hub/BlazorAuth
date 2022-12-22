@@ -104,28 +104,20 @@
             {
                 showDetails = true;
             }
-            try
+
+            var result = await ISendysServices.GetAllStringValues(userEmail);
+            if (result != null)
             {
-                //var result = await Http.GetFromJsonAsync<IEnumerable<StringValueDto>>($"sendys/getallstringvalues/{userEmail}");
-                var result = await ISendysServices.GetAllStringValues(userEmail);
-                if (result != null)
+                ArrayStr = result.ToList();
+                if (ArrayStr.Any())
                 {
-                    ArrayStr = result.ToList();
-                    if (ArrayStr.Any())
-                    {
-                        Show = true;
-                    }
-                    else
-                    {
-                        ShowButton = true;
-                    }
+                    Show = true;
+                }
+                else
+                {
+                    ShowButton = true;
                 }
             }
-            catch (Exception ex)
-            {
-                
-            }
-
         }
     }
 
