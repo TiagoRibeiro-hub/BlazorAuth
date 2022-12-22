@@ -22,7 +22,7 @@ using BlazorAuth.Server.Extensions;
 using Server.Core.Services;
 using static Duende.IdentityServer.Models.IdentityResources;
 using System.Text.Encodings.Web;
-using Server.Entities.Constants;
+using BlazorAuth.Shared;
 
 namespace BlazorAuth.Server.Areas.Identity.Pages.Account
 {

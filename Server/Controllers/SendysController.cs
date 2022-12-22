@@ -1,14 +1,14 @@
-﻿using BlazorAuth.Shared.Dtos;
+﻿using BlazorAuth.Shared;
+using BlazorAuth.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Core.Services.Sendys;
-using Server.Entities.Constants;
 
 namespace BlazorAuth.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    //[Authorize(Policy = Policy.Sendys)]
+    //[Authorize(nameof(Policies.Sendys))]
     public class SendysController : ControllerBase
     {
         private readonly ISendysService _sendysService;
@@ -91,7 +91,7 @@ namespace BlazorAuth.Server.Controllers
 
 
         [HttpGet("[action]")]
-        //[Authorize(Policy = Policy.Admin)]
+        //[Authorize(nameof(Policies.Admin))]
         public async Task<IActionResult> GetAllUsers()
         {
             try

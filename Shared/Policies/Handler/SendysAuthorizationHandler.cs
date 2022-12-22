@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Server.Entities.Constants;
 
-namespace BlazorAuth.Server.Handler;
+namespace BlazorAuth.Shared;
 
 public sealed class SendysAuthorizationHandler : AuthorizationHandler<SendysAuthorize>
 {

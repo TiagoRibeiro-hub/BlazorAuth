@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Server.Entities.Constants;
+namespace BlazorAuth.Shared;
 public static class Constants
 {
     public const string Admin = "Admin";

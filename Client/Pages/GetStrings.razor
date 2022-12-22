@@ -1,13 +1,9 @@
 ﻿@page "/getstrings"
-@using System.ComponentModel.DataAnnotations;
-@using BlazorAuth.Client.Services.Sendys;
-@using Microsoft.AspNetCore.Authorization;
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISendysServices ISendysServices
 @inject NavigationManager NavManager
 
-@*@attribute [Authorize(Policy = "User")]*@
+@attribute [Authorize(nameof(Policies.User))]
 
 <h3>Get Strings</h3>
 <div class="d-flex justify-content-center mt-4">
@@ -47,6 +43,10 @@
         public int Number { get; set; }
     }
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthTask { get; set; }
+
+    private System.Security.Claims.ClaimsPrincipal user;
 
     private InputModel inputModel = new();
     private StringValueDto[] ArrayStr;
@@ -56,11 +56,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        UserId = authState.User.FindFirst(c => c.Type == "id")?.Value ?? "";
+        var authState = await AuthTask;
+        this.user = authState.User;
+
+        UserId = this.user.FindFirst(c => c.Type == "id")?.Value ?? "";
         if (string.IsNullOrEmpty(UserId))
         {
-            var userEmail = authState.User.FindFirst(c => c.Type == "preferred_username")?.Value ?? string.Empty;
+            var userEmail = this.user.FindFirst(c => c.Type == "preferred_username")?.Value ?? string.Empty;
             var userId = await ISendysServices.GetUserId(userEmail);
             if (string.IsNullOrEmpty(userId))
             {
@@ -87,7 +89,7 @@
         }
     }
 
-    async Task BackToSendys()
+    void BackToSendys()
     {
         NavManager.NavigateTo("sendys");
     }

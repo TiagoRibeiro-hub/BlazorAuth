@@ -4,75 +4,84 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Authorization
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
+
 @inject ISendysServices ISendysServices
 @inject NavigationManager NavManager
 
-@*@attribute [Authorize(Policy = "User")]*@
+@attribute [Authorize(nameof(Policies.User))]
 
 
 <h3>Details</h3>
 
-@if (confirmAuth)
-{
-    <RedirectToLogin />
-}
-else
-{
+
     if (showDetails)
     {
-        <div class="row d-flex mt-4 ms-4">
-            <div class="row mt-3">
-                <div class="col">
-                    <p><b>First Name:</b> @userDetailDto.FirstName</p>
-                </div>
-                <div class="col">
-                    <p><b>Surname:</b> @userDetailDto.Surname</p>
-                </div>
-                <div class="col">
-                    <p><b>Birth Date:</b> @birthDate</p>
-                </div>
-                <div class="col">
-                    <p><b>Gender:</b> @gender</p>
-                </div>
-            </div>
-            <div class="row mt-3">
-                @if (Show)
-                {
-                    <RadzenDataGrid Data="@ArrayStr" TItem="StringValueDto" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
+<div class="row d-flex mt-4 ms-4">
+    <div class="row mt-3">
+        <div class="col">
+            <p><b>First Name:</b> @userDetailDto.FirstName</p>
+        </div>
+        <div class="col">
+            <p><b>Surname:</b> @userDetailDto.Surname</p>
+        </div>
+        <div class="col">
+            <p><b>Birth Date:</b> @birthDate</p>
+        </div>
+        <div class="col">
+            <p><b>Gender:</b> @gender</p>
+        </div>
+    </div>
+
+    @if (Show)
+    {
+        <div class="row mt-3">
+            <RadzenDataGrid Data="@ArrayStr" TItem="StringValueDto" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true"
                         PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left"
                         ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
-                        <Columns>
-                            <RadzenDataGridColumn TItem="StringValueDto" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
-                        </Columns>
-                    </RadzenDataGrid>
-                }
-            </div>
+                <Columns>
+                    <RadzenDataGridColumn TItem="StringValueDto" Property="Value" Filterable="false" Title="String" Frozen="true" Width="100%" TextAlign="TextAlign.Center" />
+                </Columns>
+            </RadzenDataGrid>
         </div>
     }
-}
+    else if (ShowButton)
+    {
+        <div class="row w-50 mt-3">
+            <button class="btn btn-primary w-25" @onclick="GetStrings">GetStrings</button>
+        </div>
+    }
+
+</div>
+    }
 <button class="btn btn-primary btn-backTo" @onclick="BackToSendys">Back To Sendys Menu</button>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthTask { get; set; }
+
+    private System.Security.Claims.ClaimsPrincipal user;
+
     private UserDetailDto userDetailDto = new UserDetailDto();
     private string birthDate;
     private string gender;
-    private bool confirmAuth = false;
+
     private bool Show = false;
+    private bool ShowButton = false;
     private bool showDetails = false;
+
     private List<StringValueDto> ArrayStr = new List<StringValueDto>();
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var authState = await AuthTask;
+        this.user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (this.user.Identity.IsAuthenticated)
         {
-            userDetailDto.FirstName = user.FindFirst(c => c.Type == "given_name")?.Value ?? string.Empty;
-            userDetailDto.Surname = user.FindFirst(c => c.Type == "family_name")?.Value ?? string.Empty;
-            birthDate = user.FindFirst(c => c.Type == "birthdate")?.Value ?? string.Empty;
-            gender = user.FindFirst(c => c.Type == "gender")?.Value ?? string.Empty;
+            userDetailDto.FirstName = this.user.FindFirst(c => c.Type == "given_name")?.Value ?? string.Empty;
+            userDetailDto.Surname = this.user.FindFirst(c => c.Type == "family_name")?.Value ?? string.Empty;
+            birthDate = this.user.FindFirst(c => c.Type == "birthdate")?.Value ?? string.Empty;
+            gender = this.user.FindFirst(c => c.Type == "gender")?.Value ?? string.Empty;
 
             var userEmail = user.FindFirst(c => c.Type == "preferred_username")?.Value ?? string.Empty;
 
@@ -102,16 +111,21 @@ else
                 {
                     Show = true;
                 }
+                else
+                {
+                    ShowButton = true;
+                }
             }
-        }
-        else
-        {
-            confirmAuth = true;
         }
     }
 
-    async Task BackToSendys()
+    void BackToSendys()
     {
         NavManager.NavigateTo("sendys");
+    }
+
+    void GetStrings()
+    {
+        NavManager.NavigateTo("getstrings");
     }
 }

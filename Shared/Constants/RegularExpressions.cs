@@ -1,4 +1,4 @@
-﻿namespace Server.Entities.Constants;
+﻿namespace BlazorAuth.Shared;
 
 public static class RegularExpressions
 {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Server.Entities.Entities;
 using Server.Data.Repositories;
 using static Duende.IdentityServer.Models.IdentityResources;
-using Server.Entities.Constants;
+using BlazorAuth.Shared;
 
 namespace Server.Core.Services;
 

@@ -1,6 +1,6 @@
-﻿namespace Server.Entities.Constants;
+﻿namespace BlazorAuth.Shared;
 
-public static class Role
+public static class Policy
 {
     public const string Admin = Constants.Admin;
     public const string User = Constants.User;

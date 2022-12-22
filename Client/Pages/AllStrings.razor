@@ -1,12 +1,9 @@
 ﻿@page "/allstrings"
-@using System.ComponentModel.DataAnnotations;
-@using BlazorAuth.Client.Services.Sendys;
-@using Microsoft.AspNetCore.Authorization;
 
 @inject ISendysServices ISendysServices
 @inject NavigationManager NavManager
 
-@*@attribute [Authorize(Roles = "AdminSendys")]*@
+@attribute [Authorize(nameof(Policies.Admin))]
 
 <h3>All Strings</h3>
 <div class="row d-flex justify-content-center mt-4">
@@ -95,7 +92,7 @@
         }
     }
 
-    async Task BackToSendys()
+    void BackToSendys()
     {
         NavManager.NavigateTo("sendys");
     }

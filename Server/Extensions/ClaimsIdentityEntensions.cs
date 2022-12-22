@@ -4,7 +4,7 @@ using Duende.IdentityServer.EntityFramework.Entities;
 using Google.Apis.PeopleService.v1.Data;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
-using Server.Entities.Constants;
+using BlazorAuth.Shared;
 using System.Security.Claims;
 
 namespace BlazorAuth.Server.Extensions;

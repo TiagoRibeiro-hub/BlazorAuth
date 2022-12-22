@@ -1,4 +1,5 @@
 ﻿using BlazorAuth.Server.Handler;
+using BlazorAuth.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,6 @@ using Server.Core.Services.Seed;
 using Server.Core.Services.Sendys;
 using Server.Data;
 using Server.Data.Repositories;
-using Server.Entities.Constants;
 using Server.Entities.Entities;
 using Server.Entities.Options;
 
@@ -34,7 +34,7 @@ public static class ServicesExtensions
             options.Password.RequireUppercase = true;
             options.Password.RequireLowercase = true;
 
-            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZãáàéêíóõúçÃÁÀÉÊÍÓÕÚÇ1234567890._-!@";
+            //options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZãáàéêíóõúçÃÁÀÉÊÍÓÕÚÇ1234567890._-!@";
             options.User.RequireUniqueEmail = true;
 
             options.SignIn.RequireConfirmedAccount = true;
@@ -59,28 +59,8 @@ public static class ServicesExtensions
 
     public static IServiceCollection AddPolicies(this IServiceCollection services)
     {
-        services.AddTransient<IAuthorizationHandler, AdminAuthorizationHandler>();
-        services.AddTransient<IAuthorizationHandler, UserAuthorizationHandler>();
-        services.AddTransient<IAuthorizationHandler, SendysAuthorizationHandler>();
-
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(Policy.Sendys, policy =>
-            {
-                policy.Requirements.Add(new SendysAuthorize());
-            });
-
-            options.AddPolicy(Policy.Admin, policy =>
-            {
-                policy.Requirements.Add(new AdminAuthorize());
-            });
-
-            options.AddPolicy(Policy.User, policy =>
-            {
-                policy.Requirements.Add(new UserAuthorize());
-            });
-        });
-
+        services.AddAuthorizationHandlerServices();
+        services.AddAuthorization(options => options.AddSharedPolicies());
         return services;
     }
 

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Server.Entities.Constants;
 
-namespace BlazorAuth.Server.Handler;
+
+namespace BlazorAuth.Shared;
 
 public sealed class UserAuthorizationHandler : AuthorizationHandler<UserAuthorize>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserAuthorize requirement)
     {
-        if (context.User.IsInRole(Role.User))
+        if (context.User.IsInRole(Role.Admin) || context.User.IsInRole(Role.User))
         {
             context.Succeed(requirement);
         }

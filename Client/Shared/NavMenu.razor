@@ -24,7 +24,7 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </div>
-        <AuthorizeView>
+        <AuthorizeView Policy="@nameof(Policies.Sendys)">
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="sendys">
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Sendys

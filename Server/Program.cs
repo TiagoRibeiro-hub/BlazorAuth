@@ -13,7 +13,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity();
 
-builder.Services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+builder.Services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+{
+    options.IdentityResources["openid"].UserClaims.Add("role");
+    options.ApiResources.Single().UserClaims.Add("role");
+});
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
 builder.Services.AddPolicies();
 
@@ -23,7 +28,6 @@ builder.Services.AddServices();
 builder.Services.AddRepositories();
 
 builder.Services.AddEmailService(builder.Configuration);
-
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

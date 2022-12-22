@@ -1,5 +1,5 @@
 ﻿using BlazorAuth.Shared.Enums;
-using Server.Entities.Constants;
+using BlazorAuth.Shared;
 using System.ComponentModel.DataAnnotations;
 #nullable disable
 namespace Server.Core.PageModels.Account;

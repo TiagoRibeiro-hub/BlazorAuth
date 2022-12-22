@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Server.Core.Model;
 using Server.Core.Services.Email;
-using Server.Entities.Constants;
+using BlazorAuth.Shared;
 using Server.Entities.Entities;
 
 
