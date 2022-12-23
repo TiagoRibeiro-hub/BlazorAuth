@@ -25,13 +25,13 @@ builder.Services.AddPolicies();
 builder.Services.AddAuthentication(builder.Configuration);
 
 builder.Services.AddServices();
+
 builder.Services.AddRepositories();
 
 builder.Services.AddEmailService(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
 
 
 var app = builder.Build();

@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Security.Claims;
 using System.Text.Json;
-using Blazored.LocalStorage;
 
 namespace BlazorAuth.Client.Auth.CustomUserFactory;
-public class CustomUserFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
+
+public class AccountClaimsPrincipalUserFactory : AccountClaimsPrincipalFactory<RemoteUserAccount>
 {
 
-    public CustomUserFactory(IAccessTokenProviderAccessor accessor)
+    public AccountClaimsPrincipalUserFactory(IAccessTokenProviderAccessor accessor)
         : base(accessor)
     {
 
@@ -33,7 +33,7 @@ public class CustomUserFactory : AccountClaimsPrincipalFactory<RemoteUserAccount
         {
             var key = prop.Key;
             var value = prop.Value;
-            if (value != null && value is JsonElement element && element.ValueKind == JsonValueKind.Array)
+            if (value is JsonElement element && element.ValueKind == JsonValueKind.Array)
             {
                 claimsIdentity.RemoveClaim(claimsIdentity.FindFirst(prop.Key));
                 var claims = element.EnumerateArray().Select(x => new Claim(prop.Key, x.ToString()));

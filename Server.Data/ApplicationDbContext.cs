@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Server.Data.Configuration;
 using Server.Entities.Entities;
 
+
 namespace Server.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
@@ -19,7 +20,6 @@ namespace Server.Data
         {
             builder.ApplyConfiguration(new UserDetailConfig());
             builder.ApplyConfiguration(new StringValueConfig());
-
             base.OnModelCreating(builder);
         }
 

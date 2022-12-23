@@ -14,6 +14,7 @@ public static class AuthorizationOptionsExtension
 
         return services;
     }
+
     public static void AddSharedPolicies(this AuthorizationOptions options)
     {
         var policies = FindPolicies();

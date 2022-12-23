@@ -5,5 +5,5 @@ namespace Server.Entities.Entities;
 public class ApplicationUser : IdentityUser
 {
     public UserDetail Detail { get; set; }
-    public ICollection<StringValue> StringValues { get; set; }
+    public ICollection<StringValue> StringValues { get; set; } = new Collection<StringValue>();
 }

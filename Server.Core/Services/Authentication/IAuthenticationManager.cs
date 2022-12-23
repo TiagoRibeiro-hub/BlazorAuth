@@ -8,8 +8,8 @@ namespace Server.Core.Services;
 
 public interface IAuthenticationManager
 {
-    Task<ResponseModel> CreateUser(ApplicationUser user, RegisterInputModel input, UserDetailDto userDetailDto);
-    Task<ResponseModel> ExternalLogin(ApplicationUser user, UserLoginInfo info);
+    Task<RegisterResponseModel> CreateUser(ApplicationUser user, RegisterInputModel input, UserDetailDto userDetailDto);
+    Task<RegisterResponseModel> ExternalLogin(ApplicationUser user, UserLoginInfo info);
     Task<bool> HasUserDetail(string email);
     Task<UserDetailDto> FindByUserEmail(string email);
     Task<UserDetailDto> CreateUserDetail(string email, UserDetailDto userDetailDto);

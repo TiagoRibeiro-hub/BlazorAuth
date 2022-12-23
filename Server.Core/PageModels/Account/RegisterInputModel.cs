@@ -13,7 +13,7 @@ public class RegisterInputModel
     [Required]
     [DataType(DataType.Password)]
     [Display(Name = "Password")]
-    [RegularExpression(RegularExpressions.PasswordRegex, ErrorMessage = "Password must contain at least 12 characters, 1 upper case letter, 1 lower case letter, 1 digit and 1 special character!")]
+    [RegularExpression(RegularExpressions.PasswordRegex, ErrorMessage = "Password must contain at least 6 characters, 1 upper case letter, 1 lower case letter, 1 digit and 1 special character!")]
     public string Password { get; set; }
 
 

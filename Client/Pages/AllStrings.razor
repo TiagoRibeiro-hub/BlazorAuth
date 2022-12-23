@@ -1,9 +1,5 @@
 ﻿@page "/allstrings"
 
-@inject ISendysServices ISendysServices
-@inject NavigationManager NavManager
-
-@attribute [Authorize(nameof(Policies.Admin))]
 
 <h3>All Strings</h3>
 <div class="row d-flex justify-content-center mt-4">
@@ -42,58 +38,3 @@
 }
 <button class="btn btn-primary btn-backTo" @onclick="BackToSendys">Back To Sendys Menu</button>
 
-@code {
-    public string Email = "";
-    public string Message = "";
-
-    private List<UserDetailDto> UserList = new();
-
-    private List<StringValueDto> ArrayStr = new();
-
-    private bool Show = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await ISendysServices.GetAllUsersDetails();
-        if (result != null)
-        {
-            UserList = result;
-        }
-    }
-
-    void OnChange(object value)
-    {
-        var propValue = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
-        if (propValue != null)
-        {
-            Email = propValue.ToString()!;
-        }
-        else
-        {
-            //
-        }
-    }
-
-    async Task HandleValidSubmit()
-    {
-        IEnumerable<StringValueDto> result = null;
-        if (string.IsNullOrWhiteSpace(Email))
-        {
-            Message = "Select one User";
-        }
-        else
-        {
-            result = await ISendysServices.GetAllStringValues(Email);
-            if (result != null)
-            {
-                ArrayStr = result.ToList();
-                Show = true;
-            }
-        }
-    }
-
-    void BackToSendys()
-    {
-        NavManager.NavigateTo("sendys");
-    }
-}

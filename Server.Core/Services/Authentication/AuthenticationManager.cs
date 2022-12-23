@@ -23,12 +23,12 @@ public class AuthenticationManager : IAuthenticationManager
         _userDetailService = userDetailService;
     }
 
-    public async Task<ResponseModel> CreateUser(ApplicationUser user, RegisterInputModel input, UserDetailDto userDetailDto)
+    public async Task<RegisterResponseModel> CreateUser(ApplicationUser user, RegisterInputModel input, UserDetailDto userDetailDto)
     {
         user.Detail = ApplicationUserModel.GetUserDetails(userDetailDto);
         var result = await _manager.CreateUser(user, input.Password);
 
-        var responseModel = new ResponseModel()
+        var responseModel = new RegisterResponseModel()
         {
             IdentityResult = result,
         };
@@ -41,10 +41,10 @@ public class AuthenticationManager : IAuthenticationManager
         return responseModel;
     }
 
-    public async Task<ResponseModel> ExternalLogin(ApplicationUser user, UserLoginInfo info)
+    public async Task<RegisterResponseModel> ExternalLogin(ApplicationUser user, UserLoginInfo info)
     {
         var result = await _manager.CreateAsync(user);
-        var responseModel = new ResponseModel()
+        var responseModel = new RegisterResponseModel()
         {
             IdentityResult = result,
         };
